@@ -30,11 +30,19 @@ class IndexController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()){
-             $entityManager = $this->getDoctrine()->getManager();
-             $entityManager->persist($contact);
-             $entityManager->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($contact);
+            $entityManager->flush();
 
-             //TODO Rediriger vers une page de confirmation
+            //Ajout d'un message à la session
+            $this->addFlash(
+                "success",
+                "Votre message a été envoyé, merci."
+            );
+
+            // Redirection vers une page affichant les messages flash
+            return $this->redirectToRoute('display_flash');
+
         }
 
         return $this->render(
@@ -42,5 +50,16 @@ class IndexController extends AbstractController
         ['contactForm'=> $form->createView()]
         );
     }
+/**
+ * Page affichant les messages flash enregistrés en session
+ * 
+ * @Route ("/display/message", name="display_flash")
+ *
+ */
+    public function flash()
+    {
+        return $this->render(
+            "index/flash.html.twig"
+        );
+    }
 }
-
